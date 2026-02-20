@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "IP",
+  "version": "1.0",
+  "description": "클릭 한 번으로 현재 내 IP 주소를 확인합니다.",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": ["storage"]
+}
