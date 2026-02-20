@@ -1,0 +1,432 @@
+/* ── 전체 레이아웃 (650px 최적화) ── */
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  width: 650px;
+  background: #0f1117;
+  color: #f1f5f9;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  overflow: hidden;
+}
+
+.container {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 560px; /* 480 → 560으로 늘려 코드/링크 영역 확보 */
+}
+
+/* ── 입력창 ── */
+textarea#questionInput {
+  width: 100%;
+  height: 65px;
+  background: #1e2532;
+  border: 1px solid #334155;
+  color: #f1f5f9;
+  padding: 10px;
+  border-radius: 8px;
+  resize: none;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+textarea#questionInput:focus {
+  border-color: #4f46e5;
+}
+
+/* ── 상단 바 ── */
+.action-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #161c27;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.status { font-size: 10px; color: #94a3b8; flex: 1; }
+.char-count { font-size: 10px; color: #64748b; }
+
+/* ── 버튼 ── */
+.clear-btn, .ask-btn {
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+
+.clear-btn {
+  background: #2d3748;
+  color: #cbd5e1;
+  padding: 5px 12px;
+}
+
+.clear-btn:hover { background: #3f4e64; }
+
+.ask-btn {
+  background: #4f46e5;
+  color: white;
+  padding: 6px 16px;
+  font-weight: 700;
+}
+
+.ask-btn:hover { background: #6366f1; }
+.ask-btn:active { transform: scale(0.96); }
+
+/* ── 결과창 그리드 (3열) ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+}
+
+.box {
+  background: #1e2532;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── 헤더 ── */
+.header {
+  padding: 6px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.gemini-h      { background: #1a73e8; }
+.gpt-h         { background: #10a37f; }
+.perplexity-h  { background: #6d28d9; }
+
+/* ── 본문 (스크롤 가능) ── */
+.content {
+  padding: 8px;
+  font-size: 11px;
+  line-height: 1.6;
+  overflow-y: auto;
+  color: #e2e8f0;
+  flex: 1;
+  word-break: break-word;
+  white-space: normal; /* pre-wrap → normal (HTML 렌더링 대응) */
+}
+
+/* ── 버튼 및 스크롤바 ── */
+.copy-btn {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 9px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.copy-btn:hover { background: rgba(255,255,255,0.3); }
+
+.content::-webkit-scrollbar { width: 4px; }
+.content::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}
+.content:hover::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+/* ════════════════════════════════════════
+ * 답변 텍스트 포맷
+ * ════════════════════════════════════════ */
+
+.answer-text {
+  font-size: 11px;
+  line-height: 1.65;
+  color: #e2e8f0;
+}
+
+.answer-text h2 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 8px 0 4px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid #2d3748;
+}
+
+.answer-text h3 {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 6px 0 3px;
+}
+
+.answer-text h4 {
+  font-size: 11px;
+  font-weight: 700;
+  color: #cbd5e1;
+  margin: 5px 0 2px;
+}
+
+.answer-text strong {
+  color: #f1f5f9;
+  font-weight: 700;
+}
+
+.answer-text em {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* ── 상태 텍스트 (대기/생성 중) ── */
+.status-text {
+  color: #64748b;
+  font-style: italic;
+  font-size: 11px;
+}
+
+/* ── 일반 문단 / 줄 ── */
+.answer-p {
+  margin: 0 0 4px;
+  line-height: 1.65;
+}
+
+/* ── 단락 간격 ── */
+.para-gap { height: 6px; }
+
+/* ── 번호 섹션 헤더 (1. 기본 개요) ── */
+.sec-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 10px 0 4px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #2d3748;
+}
+
+.sec-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  background: #4f46e5;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+.sec-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+/* ── 불릿 리스트 ── */
+.answer-list {
+  margin: 3px 0 5px;
+  padding-left: 12px;
+  list-style: none;
+}
+
+.answer-li {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 2px 0;
+  line-height: 1.6;
+  color: #e2e8f0;
+}
+
+.answer-li::before {
+  content: "▸";
+  color: #6366f1;
+  font-size: 9px;
+  flex-shrink: 0;
+  line-height: 1.6;
+}
+
+/* 들여쓰기 서브 아이템 */
+.answer-li--sub {
+  color: #94a3b8;
+  font-size: 10.5px;
+}
+
+.answer-li--sub::before {
+  content: "·";
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* ════════════════════════════════════════
+ * 인라인 코드
+ * ════════════════════════════════════════ */
+.inline-code {
+  background: #1a2035;
+  border: 1px solid #2d3748;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-family: 'Consolas', 'JetBrains Mono', 'Courier New', monospace;
+  color: #ff7b72;
+  word-break: break-all;
+}
+
+/* ════════════════════════════════════════
+ * 코드 블록 (별도 섹션)
+ * ════════════════════════════════════════ */
+.codes-section {
+  margin-top: 6px;
+}
+
+.code-block {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 7px;
+  background: #161b22;
+  border-bottom: 1px solid #30363d;
+}
+
+.code-lang {
+  font-size: 9px;
+  color: #8b949e;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  font-family: 'Consolas', monospace;
+}
+
+.code-copy-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid #30363d;
+  color: #8b949e;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 9px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.code-copy-btn:hover {
+  background: rgba(255,255,255,0.18);
+  color: #e2e8f0;
+  border-color: #4b5563;
+}
+
+.code-pre {
+  margin: 0;
+  padding: 7px 8px;
+  overflow-x: auto;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #e6edf3;
+  font-family: 'Consolas', 'JetBrains Mono', 'Courier New', monospace;
+  background: #0d1117;
+}
+
+.code-pre code {
+  font-family: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+.code-pre::-webkit-scrollbar { height: 3px; }
+.code-pre::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+
+/* ════════════════════════════════════════
+ * 출처 링크 (Sources)
+ * ════════════════════════════════════════ */
+.sources-section {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid #2d3748;
+}
+
+.sources-title {
+  font-size: 9px;
+  color: #64748b;
+  font-weight: 700;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.source-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  text-decoration: none;
+  padding: 2px 0;
+  transition: opacity 0.15s;
+}
+
+.source-link:hover { opacity: 0.8; }
+
+.source-num {
+  font-size: 9px;
+  background: #2d3748;
+  color: #94a3b8;
+  padding: 1px 4px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  min-width: 16px;
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 1px;
+}
+
+.source-text {
+  font-size: 9.5px;
+  line-height: 1.4;
+  color: #60a5fa;
+  word-break: break-all;
+}
+
+/* ════════════════════════════════════════
+ * 헤더 링크 (각 박스 → 해당 AI 탭으로 이동)
+ * ════════════════════════════════════════ */
+.header-link {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.header-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

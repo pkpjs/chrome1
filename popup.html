@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 입력 영역 -->
+    <div class="input-wrap">
+      <textarea id="questionInput" placeholder="질문을 입력하세요... (Enter: 전송 / Shift+Enter: 줄바꿈)"></textarea>
+    </div>
+
+    <!-- 액션 바 -->
+    <div class="action-bar">
+      <span id="statusText" class="status">실시간 연동 중</span>
+      <span id="charCount" class="char-count">0자</span>
+      <button id="clearBtn" class="clear-btn">↺ 초기화</button>
+      <button id="askBothBtn" class="ask-btn">⚡ 동시 질문</button>
+    </div>
+
+    <!-- 결과 그리드 (3열) -->
+    <div class="grid">
+      <div class="box">
+        <div class="header gemini-h">
+          <a class="header-link" data-url="https://gemini.google.com/" title="Gemini 열기">GEMINI ↗</a>
+          <button class="copy-btn" data-target="geminiResult">복사</button>
+        </div>
+        <div id="geminiResult" class="content">대기 중...</div>
+      </div>
+      <div class="box">
+        <div class="header gpt-h">
+          <a class="header-link" data-url="https://chatgpt.com/" title="ChatGPT 열기">CHATGPT ↗</a>
+          <button class="copy-btn" data-target="gptResult">복사</button>
+        </div>
+        <div id="gptResult" class="content">대기 중...</div>
+      </div>
+      <div class="box">
+        <div class="header perplexity-h">
+          <a class="header-link" data-url="https://www.perplexity.ai/" title="Perplexity 열기">PERPLEXITY ↗</a>
+          <button class="copy-btn" data-target="perplexityResult">복사</button>
+        </div>
+        <div id="perplexityResult" class="content">대기 중...</div>
+      </div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

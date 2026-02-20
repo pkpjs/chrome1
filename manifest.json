@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "AI Triple Assistant Pro",
+  "version": "2.0",
+  
+  // ── 아이콘 설정 추가 ──
+  "icons": {
+    "16": "1.png",
+    "48": "1.png",
+    "128": "1.png"
+  },
+  
+  "action": {
+    "default_popup": "popup.html",
+    // 팝업 아이콘도 함께 설정 (브라우저 상단 툴바 아이콘)
+    "default_icon": {
+      "16": "1.png",
+      "48": "1.png",
+      "128": "1.png"
+    }
+  },
+  
+  "permissions": ["tabs", "scripting", "storage", "activeTab"],
+  "host_permissions": [
+    "https://gemini.google.com/*",
+    "https://chatgpt.com/*",
+    "https://www.perplexity.ai/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
