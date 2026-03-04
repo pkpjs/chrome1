@@ -13,7 +13,7 @@ const buttonsData = [
   { name: "Naver", color: "#00c73c", url: "https://www.naver.com" },
   { name: "Gmail", color: "#ea4335", url: "https://mail.google.com" },
   { name: "Dirve", color: "#74aa9c", url: "https://drive.google.com/drive/home" },
-  { name: "Iptime", color: "#24292e", url: "http://192.168.0.1/ui/" }
+  { name: "Iptime", color: "#0D47A1", url: "http://192.168.0.1/ui/" }
 ];
 
 function renderButtons() {
