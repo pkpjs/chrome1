@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>VirusTotal 검사기</title>
+<link rel="stylesheet" href="css/popup.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon-wrap">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5s7.5-3.8 7.5-9.9V5.2L12 2.5l-7.5 2.7v6.4c0 6.1 7.5 9.9 7.5 9.9z"/><path d="M8.7 12l2.3 2.3 4.3-4.3"/></svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title">VirusTotal 검사기</div>
+          <div class="brand-sub">실시간 URL · IP 위협 탐지</div>
+        </div>
+      </div>
+      <button id="darkToggle" class="icon-btn" title="다크모드 전환">
+        <svg id="iconMoon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="iconSun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </header>
+
+    <div class="segmented" id="segmented">
+      <div class="segmented-indicator" id="segIndicator"></div>
+      <button class="seg-btn active" data-tab="url">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        URL
+      </button>
+      <button class="seg-btn" data-tab="ip">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>
+        IP
+      </button>
+    </div>
+
+    <section id="panel-url" class="panel active">
+      <div class="input-group">
+        <svg class="input-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input id="urlInput" type="text" placeholder="https://example.com" />
+      </div>
+      <div class="btn-row">
+        <button id="scanUrlBtn" class="primary-btn">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          검사
+        </button>
+        <button id="scanCurrentTabBtn" class="secondary-btn" title="현재 탭 검사">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>
+          현재 탭
+        </button>
+      </div>
+    </section>
+
+    <section id="panel-ip" class="panel">
+      <div class="input-group">
+        <svg class="input-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>
+        <input id="ipInput" type="text" placeholder="8.8.8.8" />
+      </div>
+      <button id="scanIpBtn" class="primary-btn full">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        조회
+      </button>
+    </section>
+
+    <section id="apiKeyWarning" class="warning hidden">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>API 키가 설정되지 않았습니다.</span>
+      <a href="#" id="openOptions">설정하기 →</a>
+    </section>
+
+    <section id="stateArea" class="state-area">
+      <div id="idleState" class="state idle">
+        <div class="idle-illustration">
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <p class="idle-text">URL이나 IP를 입력해 검사를 시작하세요</p>
+        <div id="historyWrap" class="history-wrap hidden">
+          <div class="history-title">최근 검사</div>
+          <div id="historyList" class="history-list"></div>
+        </div>
+      </div>
+
+      <div id="loading" class="state loading hidden">
+        <div class="spinner-ring"></div>
+        <span id="loadingText">검사 중...</span>
+      </div>
+
+      <div id="result" class="state result hidden"></div>
+    </section>
+
+    <footer class="app-footer">
+      <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5s7.5-3.8 7.5-9.9V5.2L12 2.5l-7.5 2.7v6.4c0 6.1 7.5 9.9 7.5 9.9z"/></svg>
+      Powered by VirusTotal
+    </footer>
+  </div>
+
+  <script src="js/popup.js"></script>
+</body>
+</html>
