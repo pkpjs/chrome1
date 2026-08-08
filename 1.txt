@@ -1,0 +1,147 @@
+# =====================================================================
+#  PC 초기화 후 자동 설치 스크립트
+#  대상: 구글 크롬, 카카오톡, 리그 오브 레전드(KR), 디스코드, 넥슨플러그(메이플스토리 실행용)
+#        + pkpjs/chrome1 크롬 확장프로그램(ip 조회 / 검색 / 바이러스 토탈)
+#
+#  사용법:
+#   1) Windows 초기화(재설치) 완료 후, 이 파일을 바탕화면 등에 복사
+#   2) 시작 메뉴에서 "PowerShell"을 관리자 권한으로 실행
+#   3) 아래 명령으로 실행 정책을 임시 허용 후 스크립트 실행
+#        Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+#        .\PC_재설치_자동설치.ps1
+#
+#  주의:
+#   - winget(Windows 패키지 관리자)이 필요합니다. Windows 10/11 최신 버전에는
+#     기본 내장되어 있습니다. 없다면 Microsoft Store에서 "앱 설치 관리자"를 설치하세요.
+#   - 메이플스토리 게임 본체는 넥슨플러그 설치 후, 런처 안에서 "메이플스토리 설치"를
+#     한 번 더 눌러야 합니다(넥슨 측이 게임 자체의 무인 설치 명령을 제공하지 않음).
+#   - 크롬 확장프로그램은 압축까지는 자동으로 받아두지만, 배포판(스토어)이 아닌
+#     "압축 해제된 확장 프로그램"이라 크롬 정책상 마지막 로드 단계는 수동입니다.
+# =====================================================================
+
+$ErrorActionPreference = "Continue"
+
+function Write-Step($msg) {
+    Write-Host ""
+    Write-Host "==> $msg" -ForegroundColor Cyan
+}
+
+function Test-Admin {
+    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object Security.Principal.WindowsPrincipal($identity)
+    return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+if (-not (Test-Admin)) {
+    Write-Host "관리자 권한으로 실행되지 않았습니다. 일부 설치(winget)가 실패할 수 있습니다." -ForegroundColor Yellow
+    Write-Host "가능하면 PowerShell을 '관리자 권한으로 실행'한 뒤 다시 시도하세요." -ForegroundColor Yellow
+}
+
+# ---------------------------------------------------------------------
+# 0) winget 존재 확인
+# ---------------------------------------------------------------------
+Write-Step "winget 설치 여부 확인"
+$winget = Get-Command winget -ErrorAction SilentlyContinue
+if (-not $winget) {
+    Write-Host "winget이 없습니다. Microsoft Store에서 '앱 설치 관리자(App Installer)'를 먼저 설치한 뒤 스크립트를 다시 실행하세요." -ForegroundColor Red
+    exit 1
+}
+Write-Host "winget 확인 완료: $($winget.Source)"
+
+# ---------------------------------------------------------------------
+# 공통 설치 함수
+# ---------------------------------------------------------------------
+function Install-WingetApp {
+    param(
+        [Parameter(Mandatory=$true)][string]$Id,
+        [Parameter(Mandatory=$true)][string]$DisplayName
+    )
+    Write-Step "$DisplayName 설치 시작 (id: $Id)"
+    try {
+        winget install --id $Id -e --silent --accept-package-agreements --accept-source-agreements
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "$DisplayName 설치 완료" -ForegroundColor Green
+        } else {
+            Write-Host "$DisplayName winget 종료 코드: $LASTEXITCODE (이미 설치되어 있거나 실패했을 수 있음)" -ForegroundColor Yellow
+        }
+    } catch {
+        Write-Host "$DisplayName 설치 중 오류: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
+# ---------------------------------------------------------------------
+# 1) 구글 크롬 (아래 chrome1 확장프로그램 설치를 위해 먼저 설치)
+# ---------------------------------------------------------------------
+Install-WingetApp -Id "Google.Chrome" -DisplayName "구글 크롬"
+
+# ---------------------------------------------------------------------
+# 2) 카카오톡
+# ---------------------------------------------------------------------
+Install-WingetApp -Id "Kakao.KakaoTalk" -DisplayName "카카오톡"
+
+# ---------------------------------------------------------------------
+# 3) 리그 오브 레전드 (한국 서버 / Riot Client 포함)
+# ---------------------------------------------------------------------
+Install-WingetApp -Id "RiotGames.LeagueOfLegends.KR" -DisplayName "리그 오브 레전드(KR)"
+
+# ---------------------------------------------------------------------
+# 4) 디스코드
+# ---------------------------------------------------------------------
+Install-WingetApp -Id "Discord.Discord" -DisplayName "디스코드"
+
+# ---------------------------------------------------------------------
+# 5) 넥슨플러그 (메이플스토리 등 넥슨 게임 통합 런처)
+#    -> 설치 후 런처를 열어 "메이플스토리"를 검색해 설치 버튼을 눌러야
+#       실제 게임 클라이언트가 받아집니다. (게임 설치 자체는 자동화 불가)
+# ---------------------------------------------------------------------
+Install-WingetApp -Id "Nexon.NexonPlug" -DisplayName "넥슨플러그(메이플스토리 실행용)"
+
+Write-Step "넥슨플러그 실행 안내"
+Write-Host "넥슨플러그가 설치되었다면, 로그인 후 검색창에 '메이플스토리'를 입력하고 설치 버튼을 눌러주세요." -ForegroundColor Yellow
+$nexonPlugPath = "$env:LOCALAPPDATA\NexonPlug\NexonPlug.exe"
+if (Test-Path $nexonPlugPath) {
+    Start-Process $nexonPlugPath
+} else {
+    Write-Host "넥슨플러그 실행 파일을 자동으로 찾지 못했습니다. 시작 메뉴에서 직접 실행해주세요." -ForegroundColor Yellow
+}
+
+# ---------------------------------------------------------------------
+# 6) pkpjs/chrome1 크롬 확장프로그램 (ip 조회 / 검색 / 바이러스 토탈)
+#    - 리포지토리를 통째로 내려받아 압축 해제
+#    - 크롬 정책상 "폴더 로드" 방식은 개발자 모드에서 수동 클릭이 필요
+# ---------------------------------------------------------------------
+Write-Step "chrome1 확장프로그램 리포지토리 다운로드"
+
+$destRoot = "$env:USERPROFILE\Desktop\chrome1-extensions"
+$zipUrl   = "https://github.com/pkpjs/chrome1/archive/refs/heads/main.zip"
+$zipPath  = "$env:TEMP\chrome1-main.zip"
+
+try {
+    Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath -UseBasicParsing
+    if (Test-Path $destRoot) { Remove-Item $destRoot -Recurse -Force }
+    Expand-Archive -Path $zipPath -DestinationPath $destRoot -Force
+    Remove-Item $zipPath -Force
+    Write-Host "다운로드 및 압축 해제 완료: $destRoot\chrome1-main" -ForegroundColor Green
+
+    Write-Host ""
+    Write-Host "크롬 확장프로그램 수동 로드 방법:" -ForegroundColor Cyan
+    Write-Host "  1. Chrome 주소창에 chrome://extensions 입력"
+    Write-Host "  2. 우측 상단 '개발자 모드' 켜기"
+    Write-Host "  3. '압축해제된 확장 프로그램을 로드합니다' 클릭"
+    Write-Host "  4. 아래 폴더 중 원하는 확장프로그램 폴더 선택"
+    Write-Host "       $destRoot\chrome1-main\ip 조회"
+    Write-Host "       $destRoot\chrome1-main\검색"
+    Write-Host "       $destRoot\chrome1-main\바이러스 토탈"
+
+    Start-Process "chrome://extensions"
+} catch {
+    Write-Host "chrome1 리포지토리 다운로드 실패: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "수동으로 https://github.com/pkpjs/chrome1 에서 Code > Download ZIP 을 눌러 받아주세요." -ForegroundColor Yellow
+}
+
+# ---------------------------------------------------------------------
+# 마무리
+# ---------------------------------------------------------------------
+Write-Step "설치 스크립트 종료"
+Write-Host "구글 크롬 / 카카오톡 / 리그 오브 레전드 / 디스코드 / 넥슨플러그(메이플스토리) 설치를 시도했습니다."
+Write-Host "메이플스토리 게임 본체 설치와 크롬 확장프로그램 로드는 각각 넥슨플러그와 chrome://extensions에서 수동으로 마무리해주세요."
