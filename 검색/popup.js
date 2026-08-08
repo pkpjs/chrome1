@@ -7,7 +7,7 @@ const container = document.getElementById("buttonContainer");
 ========================= */
 const buttonsData = [
   { name: "Notion", color: "#2d3436", url: "https://www.notion.so/2ea75c9e8802807b8d46d88c03c114a7?v=2ea75c9e880281d79c0d000cb876b5f2" },
-  { name: "취업자료", color: "#00b894", url: "http://pkpjs.ipdisk.co.kr:8000/list/HDD1/%EC%B7%A8%EC%97%85%20%EC%9E%90%EB%A3%8C/" },
+  { name: "취업자료", color: "#00b894", url: "http://pkpjs.ipdisk.co.kr:8000/list/HDD1/%EC%B7%A8%EC%97%85%20%EC%9E%90%EB%A3%8C/1.html" },
   { name: "Toss", color: "#0984e3", url: "https://www.tossinvest.com/" },
   { name: "구독", color: "#d63031", url: "https://www.youtube.com/feed/subscriptions" },
   { name: "Naver", color: "#00c73c", url: "https://www.naver.com" },
